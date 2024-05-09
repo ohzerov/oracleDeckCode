@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:oracle/data/cards.dart';
 import 'dart:math';
+import 'dart:js' as js;
 
 class CardTurnWidget extends StatefulWidget {
   const CardTurnWidget({super.key});
@@ -19,6 +20,7 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
   String name = '';
   String description = '';
   bool visible = false;
+  late double cardHeight;
 
   @override
   void initState() {
@@ -35,126 +37,159 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
   }
 
   @override
+  void didChangeDependencies() {
+    cardHeight = MediaQuery.of(context).size.height / 2;
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        scrolledUnderElevation: 0.0,
+        backgroundColor: Colors.transparent,
+        elevation: 0.0,
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(
-                height: 50,
+                height: 100,
               ),
-              Container(
-                child: Column(
-                  children: [
-                    AnimatedOpacity(
-                        duration: Duration(milliseconds: 500),
-                        opacity: visible ? 1.0 : 0.0,
-                        child: SizedBox(
-                          height: 45,
-                          width: MediaQuery.of(context).size.width - 36,
-                          child: FittedBox(
-                            child: Text(
-                              name,
-                              style: TextStyle(
-                                  fontSize: 28,
-                                  fontFamily: 'Tan',
-                                  fontWeight: FontWeight.w500),
-                            ),
+              Column(
+                children: [
+                  AnimatedOpacity(
+                      duration: const Duration(milliseconds: 500),
+                      opacity: visible ? 1.0 : 0.0,
+                      child: SizedBox(
+                        height: 45,
+                        width: MediaQuery.of(context).size.width - 36,
+                        child: FittedBox(
+                          child: Text(
+                            name,
+                            style: const TextStyle(
+                                fontSize: 28,
+                                fontFamily: 'Tan',
+                                fontWeight: FontWeight.w500),
                           ),
-                        )),
-                    const SizedBox(
-                      height: 28,
-                    ),
+                        ),
+                      )),
+                  const SizedBox(
+                    height: 28,
+                  ),
 
-                    InkWell(
-                      highlightColor: Colors.transparent,
-                      splashColor: Colors.transparent,
-                      onTap: () {
-                        if (_controller.isAnimating) {
-                          return;
-                        }
-                        if (_status == AnimationStatus.dismissed) {
-                          newInt = Random().nextInt(cards.length);
+                  InkWell(
+                    highlightColor: Colors.transparent,
+                    splashColor: Colors.transparent,
+                    onTap: () {
+                      if (_controller.isAnimating) {
+                        return;
+                      }
+                      if (_status == AnimationStatus.dismissed) {
+                        newInt = Random().nextInt(cards.length);
 
-                          Future.delayed(Duration(milliseconds: 700), () {
-                            setState(() {
-                              visible = true;
-                              name = cards[newInt].name;
-                              description = cards[newInt].description;
-                            });
+                        // Future.delayed(const Duration(milliseconds: 700), () {
+
+                        // });
+                        precacheImage(AssetImage(cards[newInt].link), context)
+                            .then((value) {
+                          setState(() {
+                            visible = true;
+                            name = cards[newInt].name;
+                            description = cards[newInt].description;
                           });
-                          precacheImage(AssetImage(cards[newInt].link), context)
-                              .then((value) => _controller.forward());
+                          _controller.forward();
+                        });
 
-                          tileController.expand();
-                        }
-                      },
-                      child: Transform(
-                        alignment: FractionalOffset.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, 0.0015)
-                          ..rotateY(pi * _animation.value),
-                        child: Container(
-                          clipBehavior: Clip.hardEdge,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(24)),
+                        tileController.expand();
+                      }
+                    },
+                    child: Transform(
+                      alignment: FractionalOffset.center,
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, 0.0015)
+                        ..rotateY(pi * _animation.value),
+                      child: Container(
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(24)),
+                        child: SizedBox(
+                          height: cardHeight,
                           child: _animation.value <= 0.5
-                              ? Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 2,
-                                  child: Image.asset(
-                                    'assets/images/back.jpg',
-                                    fit: BoxFit.fill,
-                                  ),
+                              ? Image.asset(
+                                  'assets/images/back.jpg',
+                                  fit: BoxFit.fill,
                                 )
-                              : Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 2,
-                                  child: Transform.flip(
-                                    flipX: true,
-                                    child: Image.asset(
-                                      cards[newInt].link,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )),
+                              : Transform.flip(
+                                  flipX: true,
+                                  child: Image.asset(
+                                    cards[newInt].link,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                         ),
                       ),
                     ),
-                    // Vertical Flipping
-                  ],
-                ),
+                  ),
+                  // Vertical Flipping
+                ],
               ),
               ExpansionTile(
-                expandDuration: Duration(milliseconds: 600),
-                shape: Border(),
+                expandDuration: const Duration(milliseconds: 600),
+                shape: const Border(),
                 controller: tileController,
-                trailing: SizedBox.shrink(),
+                trailing: const SizedBox.shrink(),
                 enabled: false,
-                title: SizedBox(),
+                title: const SizedBox(),
                 children: [
                   Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
+                          textAlign: TextAlign.left,
                           cards[newInt].title,
-                          style: TextStyle(fontSize: 20),
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 20,
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
                           cards[newInt].description,
-                          style: TextStyle(fontSize: 18),
+                          style: const TextStyle(fontSize: 18),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 6,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          js.context.callMethod('open', [
+                            'https://evagamayun.com/product/evidence-based-magic/'
+                          ]);
+                        },
+                        child: Text(
+                          "Get the deck",
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 18),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          js.context
+                              .callMethod('open', [cards[newInt].buyLink]);
+                        },
+                        child: Text(
+                          "Buy print",
+                          style: TextStyle(fontFamily: 'Inter', fontSize: 18),
+                        ),
                       ),
                       IconButton(
                         onPressed: () {
@@ -168,16 +203,16 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
                               .reverse()
                               .then((value) => Navigator.of(context).pop());
                         },
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.refresh_outlined,
-                          color: const Color.fromARGB(255, 162, 138, 208),
+                          color: Color.fromARGB(255, 162, 138, 208),
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-              SizedBox(
+              const SizedBox(
                 height: 24,
               ),
             ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:oracle/models/cardsDataModel.dart';
 import 'package:oracle/widgets/card_tab/card_tab.dart';
-import 'package:oracle/widgets/cards_tab/cards_turn_widget.dart';
+import 'package:oracle/widgets/cards_tab/cards_tab.dart';
 import 'package:oracle/widgets/gallery_tab/gallery_tab.dart';
 import 'package:oracle/widgets/info_tab/info_tab.dart';
 
@@ -16,16 +18,19 @@ class _TabsScreenState extends State<TabsScreen> {
   int _currentIndex = 0;
   bool isLoading = false;
 
-  List<Widget> body = const [
+  List<Widget> body = [
     CardTab(),
-    CardsTurnWidget(),
+    ChangeNotifierProvider(
+      create: (_) => CardsDataModel(),
+      child: CardsTab(),
+    ),
     Gallery(),
     Info(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    double iconSize = MediaQuery.of(context).size.width / 7;
+    double iconSize = 40;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 240, 242, 242),
       bottomNavigationBar: SizedBox(
@@ -40,7 +45,7 @@ class _TabsScreenState extends State<TabsScreen> {
               _currentIndex = newIdex;
             });
           },
-          backgroundColor: const Color.fromARGB(255, 240, 242, 242),
+          backgroundColor: Colors.transparent,
           items: <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               // activeIcon:

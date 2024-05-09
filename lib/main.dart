@@ -12,12 +12,13 @@ class OracleDeckApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: MaterialApp(
-          // Remove the debug banner
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
-          home: const TabsScreen()),
+        // Remove the debug banner
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: const TabsScreen(),
+      ),
     );
   }
 }
