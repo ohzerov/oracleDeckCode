@@ -30,7 +30,7 @@ class _TabsScreenState extends State<TabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    double iconSize = 40;
+    double iconSize = 35;
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 240, 242, 242),
       bottomNavigationBar: SizedBox(

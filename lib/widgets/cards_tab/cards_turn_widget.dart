@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:oracle/models/cardsDataModel.dart';
+import 'package:oracle/screens/three_cards_details_scr.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:oracle/data/cards.dart';
@@ -22,6 +23,7 @@ class _CardsTurnWidgetState extends State<CardsTurnWidget>
   String name = '';
   String description = '';
   bool visible = false;
+  bool isProcessing = false;
 
   @override
   void initState() {
@@ -37,55 +39,113 @@ class _CardsTurnWidgetState extends State<CardsTurnWidget>
     super.initState();
   }
 
+  void checkRandomValue(CardsDataModel dataModel) {
+    if (_controller.isAnimating) {
+      return;
+    }
+    isProcessing = true;
+    newInt = Random().nextInt(cards.length);
+    if (_status == AnimationStatus.dismissed) {
+      if (dataModel.dataList.contains(newInt)) {
+        checkRandomValue(dataModel);
+      } else {
+        dataModel.add(newInt);
+        if (dataModel.dataList.length == 3) {
+          widget.showButton(dataModel.dataList);
+        }
+
+        precacheImage(AssetImage(cards[newInt].link), context).then((value) {
+          setState(() {
+            visible = true;
+          });
+          _controller.forward();
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var dataModel = Provider.of<CardsDataModel>(context, listen: false);
-    return InkWell(
-      highlightColor: Colors.transparent,
-      splashColor: Colors.transparent,
-      onTap: () {
-        if (_controller.isAnimating) {
-          return;
-        }
-        if (_status == AnimationStatus.dismissed) {
-          newInt = Random().nextInt(cards.length);
-          dataModel.add(newInt);
-          if (dataModel.dataList.length == 3)
-            widget.showButton(dataModel.dataList);
-          precacheImage(AssetImage(cards[newInt].link), context).then((value) {
-            setState(() {
-              visible = true;
-              name = cards[newInt].name;
-            });
-            _controller.forward();
-          });
+    double screenWidth = MediaQuery.of(context).size.width;
 
-          //tileController.expand();
-        }
-      },
-      child: Transform(
-        alignment: FractionalOffset.center,
-        transform: Matrix4.identity()
-          ..setEntry(3, 2, 0.0015)
-          ..rotateY(pi * _animation.value),
-        child: Container(
-          clipBehavior: Clip.hardEdge,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(24)),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height / 3,
-            child: _animation.value <= 0.5
-                ? Image.asset(
+    const int mobileBreakpoint = 450;
+    const int tabletBreakpoint = 950;
+    BoxConstraints constraints;
+
+    if (screenWidth < mobileBreakpoint) {
+      constraints = BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height / 5,
+        minWidth: MediaQuery.of(context).size.width / 2.5,
+        maxWidth: MediaQuery.of(context).size.width / 2.5,
+      );
+    } else if (screenWidth <= tabletBreakpoint &&
+        screenWidth > mobileBreakpoint) {
+      constraints = BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height / 10,
+        minWidth: MediaQuery.of(context).size.width / 5,
+        maxWidth: MediaQuery.of(context).size.width / 5,
+      );
+    } else {
+      constraints = BoxConstraints(
+        minHeight: MediaQuery.of(context).size.height / 10,
+        minWidth: MediaQuery.of(context).size.width / 5,
+        maxWidth: MediaQuery.of(context).size.width / 5,
+      );
+    }
+    return Transform(
+      alignment: FractionalOffset.center,
+      transform: Matrix4.identity()
+        ..setEntry(3, 2, 0.0015)
+        ..rotateY(pi * _animation.value),
+      child: Container(
+        clipBehavior: Clip.hardEdge,
+        decoration: BoxDecoration(
+            borderRadius:
+                BorderRadius.circular(MediaQuery.of(context).size.height / 50)),
+        child: ConstrainedBox(
+          constraints: constraints,
+
+          //height: MediaQuery.of(context).size.height / 5,
+          child: _animation.value <= 0.5
+              ? InkWell(
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    if (isProcessing) {
+                      return;
+                    }
+
+                    checkRandomValue(dataModel);
+                  },
+                  child: Image.asset(
                     'assets/images/back.jpg',
-                    fit: BoxFit.fill,
-                  )
-                : Transform.flip(
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : InkWell(
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    if (dataModel.dataList.length == 3) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => ThreeCardsDetailsScreen(
+                                indexesList: dataModel.dataList,
+                              )));
+                    }
+                  },
+                  child: Transform.flip(
                     flipX: true,
                     child: Image.asset(
                       cards[newInt].link,
                       fit: BoxFit.cover,
                     ),
                   ),
-          ),
+                ),
         ),
       ),
     );

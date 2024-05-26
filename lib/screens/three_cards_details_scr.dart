@@ -1,7 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:oracle/data/cards.dart';
 
 import 'dart:js' as js;
+
+import 'package:oracle/widgets/card_tab/card_fullscreen_widget.dart';
 
 class ThreeCardsDetailsScreen extends StatelessWidget {
   const ThreeCardsDetailsScreen({super.key, required this.indexesList});
@@ -11,103 +16,218 @@ class ThreeCardsDetailsScreen extends StatelessWidget {
   @override
   build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: ListView(
-        children: [
-          SizedBox(
-            height: 24,
-          ),
-          ThreeCardsListViewItem(
-            index: indexesList[0],
-          ),
-          SizedBox(
-            height: 24,
-          ),
-          ThreeCardsListViewItem(index: indexesList[1]),
-          SizedBox(
-            height: 24,
-          ),
-          ThreeCardsListViewItem(index: indexesList[2]),
-          SizedBox(
-            height: 24,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Text(
-              "If you want to buy my Orace Deck, follow the link below :3",
-              style: TextStyle(fontFamily: 'Inter', fontSize: 14),
+        appBar: AppBar(),
+        body: LayoutBuilder(
+          builder: (context, constraints) {
+            if (constraints.maxWidth <= 600) {
+              return MobilePageView(
+                indexesList: indexesList,
+              );
+            } else {
+              return DesktopListView(
+                indexesList: indexesList,
+              );
+            }
+          },
+        ));
+  }
+}
+
+class MobilePageView extends StatelessWidget {
+  const MobilePageView({super.key, required this.indexesList});
+  final List<int> indexesList;
+
+  @override
+  Widget build(BuildContext context) {
+    return PageView(
+      controller: PageController(viewportFraction: 0.86),
+      children: [
+        MobilePageViewItem(cardIndex: indexesList[0]),
+        MobilePageViewItem(cardIndex: indexesList[2]),
+        MobilePageViewItem(cardIndex: indexesList[1]),
+      ],
+    );
+  }
+}
+
+class MobilePageViewItem extends StatelessWidget {
+  const MobilePageViewItem({super.key, required this.cardIndex});
+  final int cardIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Center(
+        child: SizedBox(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 24,
+                ),
+                InkWell(
+                  hoverColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  splashColor: Colors.transparent,
+                  onTap: () {
+                    HapticFeedback.heavyImpact();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            CardFullScreenScreen(index: cardIndex),
+                      ),
+                    );
+                  },
+                  child: SizedBox(
+                    //width: MediaQuery.of(context).size.width / 1.3,
+                    child: Image.asset(
+                      cards[cardIndex].link,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                Text(
+                  textAlign: TextAlign.center,
+                  cards[cardIndex].name,
+                  style: TextStyle(fontFamily: "Tan", fontSize: 18),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  textAlign: TextAlign.center,
+                  cards[cardIndex].title,
+                  style: TextStyle(
+                      fontFamily: "Inter",
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16),
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  textAlign: TextAlign.center,
+                  cards[cardIndex].description,
+                  style: TextStyle(
+                    fontFamily: "inter",
+                    fontSize: 16,
+                  ),
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+              ],
             ),
           ),
-          TextButton(
-            onPressed: () {
-              js.context.callMethod('open',
-                  ['https://evagamayun.com/product/evidence-based-magic/']);
-            },
-            child: Text(
-              textAlign: TextAlign.start,
-              "Get the deck",
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 12,
-              ),
-            ),
-          ),
-          SizedBox(
-            height: 24,
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class ThreeCardsListViewItem extends StatelessWidget {
-  const ThreeCardsListViewItem({super.key, required this.index});
-  final int index;
+class DesktopListView extends StatelessWidget {
+  const DesktopListView({super.key, required this.indexesList});
+  final List<int> indexesList;
   @override
-  build(BuildContext context) {
-    double rowItemSize = MediaQuery.of(context).size.width / 2;
-    return Expanded(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SizedBox(
-              width: rowItemSize * 0.8,
-              child: SizedBox(child: Image.asset(cards[index].link))),
-          const SizedBox(
-            width: 16,
-          ),
-          SizedBox(
-            width: rowItemSize,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  cards[index].name,
-                  style: TextStyle(fontFamily: 'Tan', fontSize: 24),
-                ),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(cards[index].title,
-                    style: const TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500)),
-                const SizedBox(
-                  height: 8,
-                ),
-                Text(
-                  cards[index].description,
-                  style: const TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500),
-                ),
-              ],
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(32),
+      child: Center(
+        child: ListView(
+          children: [
+            DesktopListViewItem(
+              cardIndex: indexesList[0],
             ),
-          ),
-        ],
+            DesktopListViewItem(
+              cardIndex: indexesList[2],
+            ),
+            DesktopListViewItem(
+              cardIndex: indexesList[1],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class DesktopListViewItem extends StatelessWidget {
+  const DesktopListViewItem({super.key, required this.cardIndex});
+  final int cardIndex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      child: SizedBox(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            InkWell(
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        CardFullScreenScreen(index: cardIndex),
+                  ),
+                );
+              },
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width / 4,
+                child: Image.asset(cards[cardIndex].link),
+              ),
+            ),
+            SizedBox(
+              width: MediaQuery.of(context).size.width / 2,
+              child: Column(
+                children: [
+                  Text(
+                    textAlign: TextAlign.left,
+                    cards[cardIndex].name,
+                    style: TextStyle(fontFamily: "Tan", fontSize: 24),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  Text(
+                    textAlign: TextAlign.left,
+                    cards[cardIndex].title,
+                    style: TextStyle(
+                        fontFamily: "Inter",
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18),
+                  ),
+                  SizedBox(
+                    height: 6,
+                  ),
+                  Text(
+                    softWrap: true,
+                    textAlign: TextAlign.left,
+                    cards[cardIndex].description,
+                    style: TextStyle(
+                      fontFamily: "inter",
+                      fontSize: 18,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 24,
+                  ),
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

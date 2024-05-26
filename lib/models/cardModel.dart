@@ -1,5 +1,5 @@
-class Card {
-  Card(
+class OracleCard {
+  OracleCard(
       {required this.name,
       required this.title,
       required this.description,

@@ -1,69 +1,200 @@
 import 'package:flutter/material.dart';
 import 'package:oracle/screens/card_details_screen.dart';
 import 'package:oracle/data/cards.dart';
+import 'package:oracle/models/cardModel.dart';
 
 class Gallery extends StatelessWidget {
   const Gallery({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      itemCount: cards.length,
-      itemBuilder: (BuildContext context, int index) {
-        return InkWell(
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => CardDetailsScreen(
-                  index: index,
+    return LayoutBuilder(builder: (context, constraints) {
+      if (constraints.maxWidth <= 600) {
+        return GalleryMobile();
+      } else {
+        return Center(
+          child: SizedBox(
+              width: MediaQuery.of(context).size.width / 1.3,
+              child: GalleryDesktop()),
+        );
+      }
+    });
+  }
+}
+
+class GalleryMobile extends StatefulWidget {
+  const GalleryMobile({super.key});
+
+  @override
+  State<GalleryMobile> createState() => _GalleryMobileState();
+}
+
+class _GalleryMobileState extends State<GalleryMobile> {
+  final _searchController = TextEditingController();
+  List<OracleCard> _fiteredCards = cards;
+  void _searchCards() {
+    final query = _searchController.text;
+    if (query.isEmpty) {
+      _fiteredCards = cards;
+    } else {
+      _fiteredCards = cards.where((OracleCard card) {
+        return card.name.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    _searchController.addListener(_searchCards);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 8.0, right: 8),
+          child: GridView.builder(
+            padding: EdgeInsets.only(top: 100),
+            itemCount: _fiteredCards.length,
+            itemBuilder: (BuildContext context, int index) {
+              return InkWell(
+                hoverColor: Colors.transparent,
+                focusColor: Colors.transparent,
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                onTap: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CardDetailsScreen(
+                        index: index,
+                      ),
+                    ),
+                  );
+                },
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    _fiteredCards[index].link,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              );
+            },
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.65,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+              //mainAxisExtent: 275,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+          child: TextField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.search_outlined),
+              labelText: 'SEARCH CARDS',
+              filled: true,
+              fillColor:
+                  const Color.fromARGB(255, 240, 242, 242).withAlpha(220),
+            ),
+            controller: _searchController,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class GalleryDesktop extends StatefulWidget {
+  const GalleryDesktop({super.key});
+
+  @override
+  State<GalleryDesktop> createState() => _GalleryDesktopState();
+}
+
+class _GalleryDesktopState extends State<GalleryDesktop> {
+  final _searchController = TextEditingController();
+  List<OracleCard> _fiteredCards = cards;
+  void _searchCards() {
+    final query = _searchController.text;
+    if (query.isEmpty) {
+      _fiteredCards = cards;
+    } else {
+      _fiteredCards = cards.where((OracleCard card) {
+        return card.name.toLowerCase().contains(query.toLowerCase());
+      }).toList();
+    }
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    _searchController.addListener(_searchCards);
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        GridView.builder(
+          padding: EdgeInsets.only(top: 100),
+          itemCount: _fiteredCards.length,
+          itemBuilder: (BuildContext context, int index) {
+            return InkWell(
+              hoverColor: Colors.transparent,
+              focusColor: Colors.transparent,
+              highlightColor: Colors.transparent,
+              splashColor: Colors.transparent,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => CardDetailsScreen(
+                      index: index,
+                    ),
+                  ),
+                );
+              },
+              child: SizedBox(
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(16),
+                  child: Image.asset(
+                    _fiteredCards[index].link,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             );
           },
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
-            child: Container(
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 250,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(16),
-                      child: Hero(
-                        tag: 'tag',
-                        child: Image.asset(
-                          cards[index].link,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  SizedBox(
-                      height: 50,
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        maxLines: 2,
-                        cards[index].name,
-                        style: const TextStyle(fontFamily: 'Tan', fontSize: 15),
-                      ))
-                ],
-              ),
-            ),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            childAspectRatio: 0.7,
+            crossAxisSpacing: 32,
+            mainAxisSpacing: 32,
+            //mainAxisExtent: 375,
           ),
-        );
-      },
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 0.75,
-        crossAxisSpacing: 0,
-        mainAxisSpacing: 0,
-        mainAxisExtent: 316,
-      ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
+          child: TextField(
+            decoration: InputDecoration(
+              border: InputBorder.none,
+              prefixIcon: Icon(Icons.search_outlined),
+              labelText: 'SEARCH CARDS',
+              filled: true,
+              fillColor:
+                  const Color.fromARGB(255, 240, 242, 242).withAlpha(220),
+            ),
+            controller: _searchController,
+          ),
+        ),
+      ],
     );
   }
 }

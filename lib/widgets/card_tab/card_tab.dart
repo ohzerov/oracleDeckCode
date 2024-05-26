@@ -1,3 +1,5 @@
+import "dart:ui";
+
 import "package:flutter/material.dart";
 import "package:flutter/widgets.dart";
 import "package:oracle/widgets/card_tab/PageViewHolder.dart";
@@ -14,6 +16,7 @@ class CardTab extends StatefulWidget {
 class _CardTabState extends State<CardTab> with TickerProviderStateMixin {
   late PageViewHolder pageViewHolder;
   late PageController pageCtrl;
+
   double fraction = 0.5;
   final ExpansionTileController tileController = ExpansionTileController();
   late AnimationController _controller;
@@ -29,6 +32,7 @@ class _CardTabState extends State<CardTab> with TickerProviderStateMixin {
     super.initState();
 
     pageCtrl = PageController(initialPage: 10, viewportFraction: fraction);
+
     pageViewHolder = PageViewHolder(value: 10);
     pageCtrl.addListener(() {
       pageViewHolder.setValue(pageCtrl.page);
@@ -48,22 +52,76 @@ class _CardTabState extends State<CardTab> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: AspectRatio(
-        aspectRatio: 1,
-        child: ChangeNotifierProvider<PageViewHolder>.value(
-          value: pageViewHolder,
-          child: PageView.builder(
-            controller: pageCtrl,
-            //itemCount: 50,
+      child: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+        double screenWidth = constraints.maxWidth;
+        double cardAspectRatio = 0.66;
+        double cardWidth = screenWidth / 5;
+        double cardHeight = cardWidth * cardAspectRatio;
+        if (constraints.maxWidth <= 600) {
+          return AspectRatio(
+            aspectRatio: 1,
+            child: ChangeNotifierProvider<PageViewHolder>.value(
+              value: pageViewHolder,
+              child: PageView.builder(
+                controller: pageCtrl,
+                //itemCount: 50,
+                itemBuilder: (context, index) {
+                  return Page(
+                    number: index.toDouble(),
+                    fraction: fraction,
+                  );
+                },
+              ),
+            ),
+          );
+        } else {
+          return PageView.builder(
+            scrollBehavior: const ScrollBehavior().copyWith(dragDevices: {
+              PointerDeviceKind.touch,
+              PointerDeviceKind.mouse,
+              PointerDeviceKind.stylus,
+            }),
+            controller: PageController(
+                initialPage: 10,
+                viewportFraction: cardWidth / (screenWidth / 1.2)),
+            // Example item count
             itemBuilder: (context, index) {
-              return Page(
-                number: index.toDouble(),
-                fraction: fraction,
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Center(
+                  child: AspectRatio(
+                    aspectRatio: cardAspectRatio,
+                    child: InkWell(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => CardTurnWidget(),
+                          ),
+                        );
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(24),
+                        child: SizedBox(
+                          child: Hero(
+                            tag: 'image_back',
+                            child: Image.asset(
+                              'assets/images/back.jpg',
+                              fit: BoxFit.fill,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               );
             },
-          ),
-        ),
-      ),
+          );
+        }
+      }),
     );
   }
 }
@@ -112,6 +170,36 @@ class _PageState extends State<Page> {
                 fit: BoxFit.fill,
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class PageDesktop extends StatelessWidget {
+  const PageDesktop({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      highlightColor: Colors.transparent,
+      splashColor: Colors.transparent,
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => CardTurnWidget(),
+          ),
+        );
+      },
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: SizedBox(
+          width: 100,
+          height: 500,
+          child: Image.asset(
+            'assets/images/back.jpg',
+            fit: BoxFit.fill,
           ),
         ),
       ),

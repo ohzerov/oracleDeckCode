@@ -18,7 +18,7 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Eva Gamayun's Oracle Deck App.">
 
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -38,8 +38,33 @@
   </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <style>
+    .loader {
+
+      width: 100vw;
+      height: 100vh;
+      
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+    }
+    .indicator{
+      width: 35vw;
+
+    }
+  </style>
 </head>
-<body>
+<body style="overflow: hidden; background-color: #000000;">
+  
+
+  <div id="loading_idicator" class="loader">
+
+    <img class="indicator" src="./assets/gif.gif" alt="loading">
+
+
+
+  </div>
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
@@ -54,6 +79,17 @@
         }
       });
     });
+  </script>
+  <script>
+    window.onload = function (){
+
+      setTimeout(function(){
+        var loadingIndicator = document.getElementById("loading_idicator");
+        if(loadingIndicator){
+          loadingIndicator.remove();
+        }
+      }, 3000);
+    };
   </script>
 </body>
 </html>

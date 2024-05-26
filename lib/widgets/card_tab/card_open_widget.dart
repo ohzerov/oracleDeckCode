@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:oracle/data/cards.dart';
+import 'package:flutter/services.dart';
 import 'dart:math';
 import 'dart:js' as js;
+
+import 'package:oracle/widgets/card_tab/card_fullscreen_widget.dart';
 
 class CardTurnWidget extends StatefulWidget {
   const CardTurnWidget({super.key});
@@ -33,13 +37,34 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
       ..addStatusListener((status) {
         _status = status;
       });
+    Future.delayed(Duration(milliseconds: 300), () {
+      if (mounted) onOpenCard();
+    });
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
-    cardHeight = MediaQuery.of(context).size.height / 2;
+    cardHeight = MediaQuery.of(context).size.height / 1.6;
     super.didChangeDependencies();
+  }
+
+  void onOpenCard() {
+    if (_controller.isAnimating) {
+      return;
+    }
+    if (_status == AnimationStatus.dismissed) {
+      newInt = Random().nextInt(cards.length);
+
+      precacheImage(AssetImage(cards[newInt].link), context).then((value) {
+        setState(() {
+          name = cards[newInt].name;
+          description = cards[newInt].description;
+        });
+
+        _controller.forward();
+      });
+    }
   }
 
   @override
@@ -51,63 +76,26 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
         backgroundColor: Colors.transparent,
         elevation: 0.0,
       ),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 100,
-              ),
-              Column(
-                children: [
-                  AnimatedOpacity(
-                      duration: const Duration(milliseconds: 500),
-                      opacity: visible ? 1.0 : 0.0,
-                      child: SizedBox(
-                        height: 45,
-                        width: MediaQuery.of(context).size.width - 36,
-                        child: FittedBox(
-                          child: Text(
-                            name,
-                            style: const TextStyle(
-                                fontSize: 28,
-                                fontFamily: 'Tan',
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      )),
-                  const SizedBox(
-                    height: 28,
-                  ),
+      body: LayoutBuilder(builder: (context, constraints) {
+        double descriptionTextWidth;
 
-                  InkWell(
-                    highlightColor: Colors.transparent,
-                    splashColor: Colors.transparent,
-                    onTap: () {
-                      if (_controller.isAnimating) {
-                        return;
-                      }
-                      if (_status == AnimationStatus.dismissed) {
-                        newInt = Random().nextInt(cards.length);
+        if (constraints.maxWidth > 600) {
+          descriptionTextWidth = constraints.maxWidth / 2.5;
+        } else {
+          descriptionTextWidth = constraints.maxWidth / 1.2;
+        }
 
-                        // Future.delayed(const Duration(milliseconds: 700), () {
-
-                        // });
-                        precacheImage(AssetImage(cards[newInt].link), context)
-                            .then((value) {
-                          setState(() {
-                            visible = true;
-                            name = cards[newInt].name;
-                            description = cards[newInt].description;
-                          });
-                          _controller.forward();
-                        });
-
-                        tileController.expand();
-                      }
-                    },
-                    child: Transform(
+        return SingleChildScrollView(
+          child: Center(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(
+                  height: 70,
+                ),
+                Column(
+                  children: [
+                    Transform(
                       alignment: FractionalOffset.center,
                       transform: Matrix4.identity()
                         ..setEntry(3, 2, 0.0015)
@@ -119,106 +107,129 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
                         child: SizedBox(
                           height: cardHeight,
                           child: _animation.value <= 0.5
-                              ? Image.asset(
-                                  'assets/images/back.jpg',
-                                  fit: BoxFit.fill,
-                                )
-                              : Transform.flip(
-                                  flipX: true,
+                              ? Hero(
+                                  tag: 'image_back',
                                   child: Image.asset(
-                                    cards[newInt].link,
-                                    fit: BoxFit.cover,
+                                    'assets/images/back.jpg',
+                                    fit: BoxFit.fill,
+                                  ),
+                                )
+                              : InkWell(
+                                  hoverColor: Colors.transparent,
+                                  focusColor: Colors.transparent,
+                                  highlightColor: Colors.transparent,
+                                  splashColor: Colors.transparent,
+                                  onTap: () {
+                                    HapticFeedback.heavyImpact();
+                                    setState(() {
+                                      visible = true;
+                                      name = cards[newInt].name;
+                                      description = cards[newInt].description;
+                                      tileController.expand();
+                                    });
+                                  },
+                                  onDoubleTap: () {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CardFullScreenScreen(index: newInt),
+                                      ),
+                                    );
+                                  },
+                                  child: Transform.flip(
+                                    flipX: true,
+                                    child: Image.asset(
+                                      cards[newInt].link,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                         ),
                       ),
                     ),
-                  ),
-                  // Vertical Flipping
-                ],
-              ),
-              ExpansionTile(
-                expandDuration: const Duration(milliseconds: 600),
-                shape: const Border(),
-                controller: tileController,
-                trailing: const SizedBox.shrink(),
-                enabled: false,
-                title: const SizedBox(),
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                    SizedBox(
+                      height: 16,
+                    ),
+                    Center(
                         child: Text(
-                          textAlign: TextAlign.left,
-                          cards[newInt].title,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                      'tap to read, doubletap to fullscreen',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 159, 159, 159)),
+                    )),
+                    // Vertical Flipping
+                  ],
+                ),
+                SizedBox(
+                  height: 24,
+                ),
+                ExpansionTile(
+                  shape: const Border(),
+                  controller: tileController,
+                  trailing: const SizedBox.shrink(),
+                  enabled: false,
+                  title: const SizedBox.shrink(),
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width / 1.1,
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            maxLines: 2,
+                            name.toUpperCase(),
+                            style: const TextStyle(
+                                fontSize: 24,
+                                fontFamily: 'Tan',
+                                fontWeight: FontWeight.w500),
+                          ),
                         ),
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: Text(
-                          cards[newInt].description,
-                          style: const TextStyle(fontSize: 18),
+                        const SizedBox(
+                          height: 18,
                         ),
-                      ),
-                      const SizedBox(
-                        height: 6,
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          js.context.callMethod('open', [
-                            'https://evagamayun.com/product/evidence-based-magic/'
-                          ]);
-                        },
-                        child: Text(
-                          "Get the deck",
-                          style: TextStyle(fontFamily: 'Inter', fontSize: 18),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            cards[newInt].title,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 20,
+                            ),
+                          ),
                         ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          js.context
-                              .callMethod('open', [cards[newInt].buyLink]);
-                        },
-                        child: Text(
-                          "Buy print",
-                          style: TextStyle(fontFamily: 'Inter', fontSize: 18),
+                        const SizedBox(
+                          height: 12,
                         ),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            visible = false;
-                            //name = '';
-                            //description = '';
-                          });
-                          tileController.collapse();
-                          _controller
-                              .reverse()
-                              .then((value) => Navigator.of(context).pop());
-                        },
-                        icon: const Icon(
-                          Icons.refresh_outlined,
-                          color: Color.fromARGB(255, 162, 138, 208),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: SizedBox(
+                            width: descriptionTextWidth,
+                            child: Text(
+                              textAlign: TextAlign.center,
+                              cards[newInt].description,
+                              style: const TextStyle(fontSize: 20),
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 24,
-              ),
-            ],
+                        const SizedBox(
+                          height: 18,
+                        ),
+                        SizedBox(
+                          width: 42,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
+        );
+      }),
     );
   }
 }
