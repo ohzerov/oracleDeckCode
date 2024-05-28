@@ -10,12 +10,12 @@ class Gallery extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constraints) {
       if (constraints.maxWidth <= 600) {
-        return GalleryMobile();
+        return const GalleryMobile();
       } else {
         return Center(
           child: SizedBox(
               width: MediaQuery.of(context).size.width / 1.3,
-              child: GalleryDesktop()),
+              child: const GalleryDesktop()),
         );
       }
     });
@@ -57,7 +57,7 @@ class _GalleryMobileState extends State<GalleryMobile> {
         Padding(
           padding: const EdgeInsets.only(left: 8.0, right: 8),
           child: GridView.builder(
-            padding: EdgeInsets.only(top: 100),
+            padding: const EdgeInsets.only(top: 100),
             itemCount: _fiteredCards.length,
             itemBuilder: (BuildContext context, int index) {
               return InkWell(
@@ -69,7 +69,8 @@ class _GalleryMobileState extends State<GalleryMobile> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (context) => CardDetailsScreen(
-                        index: index,
+                        index: cards.indexWhere((item) =>
+                            item.name.contains(_fiteredCards[index].name)),
                       ),
                     ),
                   );
@@ -96,9 +97,12 @@ class _GalleryMobileState extends State<GalleryMobile> {
           padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
           child: TextField(
             decoration: InputDecoration(
-              border: InputBorder.none,
-              prefixIcon: Icon(Icons.search_outlined),
-              labelText: 'SEARCH CARDS',
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide:
+                      const BorderSide(width: 0, style: BorderStyle.none)),
+              prefixIcon: const Icon(Icons.search_outlined),
+              hintText: 'SEARCH CARDS',
               filled: true,
               fillColor:
                   const Color.fromARGB(255, 240, 242, 242).withAlpha(220),
@@ -144,7 +148,7 @@ class _GalleryDesktopState extends State<GalleryDesktop> {
     return Stack(
       children: [
         GridView.builder(
-          padding: EdgeInsets.only(top: 100),
+          padding: const EdgeInsets.only(top: 100),
           itemCount: _fiteredCards.length,
           itemBuilder: (BuildContext context, int index) {
             return InkWell(
@@ -172,7 +176,7 @@ class _GalleryDesktopState extends State<GalleryDesktop> {
               ),
             );
           },
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
             childAspectRatio: 0.7,
             crossAxisSpacing: 32,
@@ -184,9 +188,12 @@ class _GalleryDesktopState extends State<GalleryDesktop> {
           padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 16),
           child: TextField(
             decoration: InputDecoration(
-              border: InputBorder.none,
-              prefixIcon: Icon(Icons.search_outlined),
-              labelText: 'SEARCH CARDS',
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide:
+                      const BorderSide(width: 0, style: BorderStyle.none)),
+              prefixIcon: const Icon(Icons.search_outlined),
+              hintText: 'SEARCH CARDS',
               filled: true,
               fillColor:
                   const Color.fromARGB(255, 240, 242, 242).withAlpha(220),

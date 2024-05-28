@@ -6,7 +6,7 @@ import 'dart:js' as js;
 
 class Info extends StatelessWidget {
   Info({super.key});
-  TextStyle buttonTextStyle = TextStyle(
+  TextStyle buttonTextStyle = const TextStyle(
       fontFamily: 'Inter',
       fontWeight: FontWeight.w500,
       fontSize: 14,
@@ -43,7 +43,7 @@ class Info extends StatelessWidget {
                     const SizedBox(
                       height: 18,
                     ),
-                    Text(
+                    const Text(
                       "EVIDENCE-BASED MAGIC",
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -54,7 +54,7 @@ class Info extends StatelessWidget {
                     const SizedBox(
                       height: 18,
                     ),
-                    Text("50-Cards Oracle Deck by Eva Gamayun",
+                    const Text("50-Cards Oracle Deck by Eva Gamayun",
                         textAlign: TextAlign.center,
                         style: TextStyle(fontFamily: 'Inter', fontSize: 14)),
                     const SizedBox(
@@ -64,8 +64,9 @@ class Info extends StatelessWidget {
                       width: constraints.maxWidth / 1.5,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Color.fromARGB(255, 216, 90, 251),
-                          side: BorderSide(width: 2, color: Colors.black),
+                          foregroundColor:
+                              const Color.fromARGB(255, 216, 90, 251),
+                          side: const BorderSide(width: 2, color: Colors.black),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -90,8 +91,9 @@ class Info extends StatelessWidget {
                       width: constraints.maxWidth / 1.5,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Color.fromARGB(255, 216, 90, 251),
-                          side: BorderSide(width: 2, color: Colors.black),
+                          foregroundColor:
+                              const Color.fromARGB(255, 216, 90, 251),
+                          side: const BorderSide(width: 2, color: Colors.black),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -116,8 +118,9 @@ class Info extends StatelessWidget {
                       width: constraints.maxWidth / 1.5,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Color.fromARGB(255, 216, 90, 251),
-                          side: BorderSide(width: 2, color: Colors.black),
+                          foregroundColor:
+                              const Color.fromARGB(255, 216, 90, 251),
+                          side: const BorderSide(width: 2, color: Colors.black),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -142,8 +145,9 @@ class Info extends StatelessWidget {
                       width: constraints.maxWidth / 1.5,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          foregroundColor: Color.fromARGB(255, 216, 90, 251),
-                          side: BorderSide(width: 2, color: Colors.black),
+                          foregroundColor:
+                              const Color.fromARGB(255, 216, 90, 251),
+                          side: const BorderSide(width: 2, color: Colors.black),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),

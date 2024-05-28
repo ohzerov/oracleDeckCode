@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:oracle/data/cards.dart';
 
-import 'dart:js' as js;
+import 'package:oracle/data/cards.dart';
 
 import 'package:oracle/widgets/card_tab/card_fullscreen_widget.dart';
 
@@ -65,7 +62,7 @@ class MobilePageViewItem extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 InkWell(
@@ -90,37 +87,37 @@ class MobilePageViewItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 Text(
                   textAlign: TextAlign.center,
                   cards[cardIndex].name,
-                  style: TextStyle(fontFamily: "Tan", fontSize: 18),
+                  style: const TextStyle(fontFamily: "Tan", fontSize: 18),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 12,
                 ),
                 Text(
                   textAlign: TextAlign.center,
                   cards[cardIndex].title,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontFamily: "Inter",
                       fontWeight: FontWeight.bold,
                       fontSize: 16),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 6,
                 ),
                 Text(
                   textAlign: TextAlign.center,
                   cards[cardIndex].description,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: "inter",
                     fontSize: 16,
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
               ],

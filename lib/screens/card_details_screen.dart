@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:oracle/widgets/card_tab/card_fullscreen_widget.dart';
 import '../data/cards.dart';
 import 'dart:js' as js;
@@ -51,42 +50,43 @@ class CardDetailsScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(16),
                                 child: Image.asset(cards[index].link))),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 24,
                       ),
                       Text(
                         textAlign: TextAlign.center,
                         cards[index].name.toUpperCase(),
-                        style: TextStyle(fontFamily: 'Tan', fontSize: 32),
+                        style: const TextStyle(fontFamily: 'Tan', fontSize: 24),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 24,
                       ),
                       Text(
                         cards[index].title,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.bold,
                             fontSize: 16),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 16,
                       ),
                       Text(
                         cards[index].description,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.w500,
                             fontSize: 16),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 24,
                       ),
                       SizedBox(
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
                             foregroundColor: Color.fromARGB(255, 0, 0, 0),
-                            side: BorderSide(width: 2, color: Colors.black),
+                            side:
+                                const BorderSide(width: 2, color: Colors.black),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(6),
                             ),
@@ -95,7 +95,7 @@ class CardDetailsScreen extends StatelessWidget {
                             js.context
                                 .callMethod('open', [cards[index].buyLink]);
                           },
-                          child: Padding(
+                          child: const Padding(
                             padding: const EdgeInsets.all(12),
                             child: Text(
                               "GET PRINT",
@@ -107,7 +107,7 @@ class CardDetailsScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 16,
                       ),
                     ],

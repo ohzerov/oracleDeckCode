@@ -19,12 +19,12 @@ class _TabsScreenState extends State<TabsScreen> {
   bool isLoading = false;
 
   List<Widget> body = [
-    CardTab(),
+    const CardTab(),
     ChangeNotifierProvider(
       create: (_) => CardsDataModel(),
-      child: CardsTab(),
+      child: const CardsTab(),
     ),
-    Gallery(),
+    const Gallery(),
     Info(),
   ];
 

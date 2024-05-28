@@ -1,7 +1,7 @@
 import "dart:ui";
 
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
+
 import "package:oracle/widgets/card_tab/PageViewHolder.dart";
 import 'package:provider/provider.dart';
 import 'card_open_widget.dart';
@@ -57,7 +57,7 @@ class _CardTabState extends State<CardTab> with TickerProviderStateMixin {
         double screenWidth = constraints.maxWidth;
         double cardAspectRatio = 0.66;
         double cardWidth = screenWidth / 5;
-        double cardHeight = cardWidth * cardAspectRatio;
+        //double cardHeight = cardWidth * cardAspectRatio;
         if (constraints.maxWidth <= 600) {
           return AspectRatio(
             aspectRatio: 1,
@@ -98,7 +98,7 @@ class _CardTabState extends State<CardTab> with TickerProviderStateMixin {
                       onTap: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => CardTurnWidget(),
+                            builder: (context) => const CardTurnWidget(),
                           ),
                         );
                       },
@@ -129,7 +129,7 @@ class _CardTabState extends State<CardTab> with TickerProviderStateMixin {
 class Page extends StatefulWidget {
   final double number;
   final double fraction;
-  Page({required this.number, required this.fraction});
+  const Page({super.key, required this.number, required this.fraction});
 
   @override
   State<Page> createState() => _PageState();
@@ -158,7 +158,7 @@ class _PageState extends State<Page> {
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (context) => CardTurnWidget(),
+                builder: (context) => const CardTurnWidget(),
               ),
             );
           },
@@ -188,7 +188,7 @@ class PageDesktop extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => CardTurnWidget(),
+            builder: (context) => const CardTurnWidget(),
           ),
         );
       },

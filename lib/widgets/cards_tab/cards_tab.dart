@@ -80,7 +80,7 @@ class cardsTabMobileLayout extends StatelessWidget {
                             CardsTurnWidget(
                               showButton: showButton,
                             ),
-                            SizedBox(
+                            const SizedBox(
                               height: 24,
                             ),
                             CardsTurnWidget(
@@ -102,7 +102,7 @@ class cardsTabMobileLayout extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 SizedBox(
@@ -114,18 +114,19 @@ class cardsTabMobileLayout extends StatelessWidget {
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: Color.fromARGB(255, 6, 1, 7),
-                                side: BorderSide(width: 2, color: Colors.black),
+                                side: const BorderSide(
+                                    width: 2, color: Colors.black),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
                               onPressed: showThreeCardsDataScreen,
-                              child: Text('Read Cards',
+                              child: const Text('Read Cards',
                                   style: TextStyle(fontSize: 18)),
                             ),
                           ),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                 ),
               ],
             ),
@@ -161,13 +162,13 @@ class cardsTabDesktopLayout extends StatelessWidget {
                     CardsTurnWidget(
                       showButton: showButton,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     CardsTurnWidget(
                       showButton: showButton,
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 20,
                     ),
                     CardsTurnWidget(
@@ -175,7 +176,7 @@ class cardsTabDesktopLayout extends StatelessWidget {
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 48,
                 ),
                 SizedBox(
@@ -186,22 +187,24 @@ class cardsTabDesktopLayout extends StatelessWidget {
                           child: SizedBox(
                             child: OutlinedButton(
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: Color.fromARGB(255, 0, 0, 0),
-                                side: BorderSide(width: 2, color: Colors.black),
+                                foregroundColor:
+                                    const Color.fromARGB(255, 0, 0, 0),
+                                side: const BorderSide(
+                                    width: 2, color: Colors.black),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                               ),
                               onPressed: showThreeCardsDataScreen,
-                              child: Padding(
-                                padding: const EdgeInsets.all(12),
+                              child: const Padding(
+                                padding: EdgeInsets.all(12),
                                 child: Text('READ CARDS',
                                     style: TextStyle(fontSize: 18)),
                               ),
                             ),
                           ),
                         )
-                      : SizedBox(),
+                      : const SizedBox(),
                 ),
               ],
             ),

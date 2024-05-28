@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+
 import 'package:oracle/data/cards.dart';
 import 'package:flutter/services.dart';
 import 'dart:math';
-import 'dart:js' as js;
 
 import 'package:oracle/widgets/card_tab/card_fullscreen_widget.dart';
 
@@ -37,7 +36,7 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
       ..addStatusListener((status) {
         _status = status;
       });
-    Future.delayed(Duration(milliseconds: 300), () {
+    Future.delayed(const Duration(milliseconds: 300), () {
       if (mounted) onOpenCard();
     });
     super.initState();
@@ -147,10 +146,10 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
                         ),
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 16,
                     ),
-                    Center(
+                    const Center(
                         child: Text(
                       'tap to read, doubletap to fullscreen',
                       style:
@@ -159,7 +158,7 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
                     // Vertical Flipping
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 24,
                 ),
                 ExpansionTile(
@@ -215,7 +214,7 @@ class _CardTurnWidgetState extends State<CardTurnWidget>
                         const SizedBox(
                           height: 18,
                         ),
-                        SizedBox(
+                        const SizedBox(
                           width: 42,
                         ),
                       ],
