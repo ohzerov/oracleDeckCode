@@ -1,14 +1,16 @@
 import 'dart:math';
 import 'package:oracle/models/cardsDataModel.dart';
 import 'package:oracle/screens/three_cards_details_scr.dart';
+import 'package:oracle/widgets/cards_tab/showButtonCounter.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:oracle/data/cards.dart';
 
 class CardsTurnWidget extends StatefulWidget {
-  const CardsTurnWidget({super.key, required this.showButton});
+  const CardsTurnWidget(
+      {super.key, required this.showButton, required this.position});
   final Function(List<int>) showButton;
-
+  final int position;
   @override
   State<CardsTurnWidget> createState() => _CardsTurnWidgetState();
 }
@@ -39,7 +41,8 @@ class _CardsTurnWidgetState extends State<CardsTurnWidget>
     super.initState();
   }
 
-  void checkRandomValue(CardsDataModel dataModel) {
+  void checkRandomValue(
+      CardsDataModel dataModel, ShowButtonCounter counterNotifier) {
     if (_controller.isAnimating) {
       return;
     }
@@ -47,12 +50,10 @@ class _CardsTurnWidgetState extends State<CardsTurnWidget>
     newInt = Random().nextInt(cards.length);
     if (_status == AnimationStatus.dismissed) {
       if (dataModel.dataList.contains(newInt)) {
-        checkRandomValue(dataModel);
+        checkRandomValue(dataModel, counterNotifier);
       } else {
-        dataModel.add(newInt);
-        if (dataModel.dataList.length == 3) {
-          widget.showButton(dataModel.dataList);
-        }
+        dataModel.add(newInt, widget.position);
+        counterNotifier.add();
 
         precacheImage(AssetImage(cards[newInt].link), context).then((value) {
           setState(() {
@@ -66,6 +67,7 @@ class _CardsTurnWidgetState extends State<CardsTurnWidget>
 
   @override
   Widget build(BuildContext context) {
+    final myNotifier = Provider.of<ShowButtonCounter>(context);
     var dataModel = Provider.of<CardsDataModel>(context, listen: false);
     double screenWidth = MediaQuery.of(context).size.width;
 
@@ -118,7 +120,7 @@ class _CardsTurnWidgetState extends State<CardsTurnWidget>
                       return;
                     }
 
-                    checkRandomValue(dataModel);
+                    checkRandomValue(dataModel, myNotifier);
                   },
                   child: Image.asset(
                     'assets/images/back.jpg',

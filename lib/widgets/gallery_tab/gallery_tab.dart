@@ -160,7 +160,8 @@ class _GalleryDesktopState extends State<GalleryDesktop> {
                 Navigator.of(context).push(
                   MaterialPageRoute(
                     builder: (context) => CardDetailsScreen(
-                      index: index,
+                      index: cards.indexWhere((item) =>
+                          item.name.contains(_fiteredCards[index].name)),
                     ),
                   ),
                 );

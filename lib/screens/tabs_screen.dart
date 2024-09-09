@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:oracle/widgets/cards_tab/showButtonCounter.dart';
 import 'package:provider/provider.dart';
 import 'package:oracle/models/cardsDataModel.dart';
 import 'package:oracle/widgets/card_tab/card_tab.dart';
@@ -20,8 +21,15 @@ class _TabsScreenState extends State<TabsScreen> {
 
   List<Widget> body = [
     const CardTab(),
-    ChangeNotifierProvider(
-      create: (_) => CardsDataModel(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<CardsDataModel>(
+          create: (_) => CardsDataModel(),
+        ),
+        ChangeNotifierProvider<ShowButtonCounter>(
+          create: (_) => ShowButtonCounter(),
+        ),
+      ],
       child: const CardsTab(),
     ),
     const Gallery(),

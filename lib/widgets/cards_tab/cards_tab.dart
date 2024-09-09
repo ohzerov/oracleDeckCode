@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:oracle/models/cardsDataModel.dart';
+import 'package:oracle/widgets/cards_tab/showButtonCounter.dart';
+import 'package:provider/provider.dart';
 import 'package:oracle/screens/three_cards_details_scr.dart';
 
 import 'package:oracle/widgets/cards_tab/cards_turn_widget.dart';
@@ -13,17 +15,22 @@ class CardsTab extends StatefulWidget {
 
 class _CardsTabState extends State<CardsTab> {
   List<int> listOfIndexes = [];
+  int isShowButtonCounter = 0;
   bool isShowButton = false;
-  void showButton(List<int> indexList) {
+  void showButton(
+    List<int> indexList,
+  ) {
     listOfIndexes = indexList;
     isShowButton = true;
+
     setState(() {});
   }
 
   void showThreeCardsDataScreen() {
+    var dataModel = Provider.of<CardsDataModel>(context, listen: false);
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => ThreeCardsDetailsScreen(
-              indexesList: listOfIndexes,
+              indexesList: dataModel.dataList,
             )));
   }
 
@@ -32,12 +39,24 @@ class _CardsTabState extends State<CardsTab> {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
         if (constraints.maxWidth > 600) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<CardsDataModel>(context, listen: false).resetValues();
+            Provider.of<ShowButtonCounter>(context, listen: false)
+                .resetValues();
+          });
+
           return cardsTabDesktopLayout(
               isShowButton: isShowButton,
               showButton: showButton,
               showThreeCardsDataScreen: showThreeCardsDataScreen);
         } else {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Provider.of<CardsDataModel>(context, listen: false).resetValues();
+            Provider.of<ShowButtonCounter>(context, listen: false)
+                .resetValues();
+          });
           return cardsTabMobileLayout(
+              isShowButtonCounter: isShowButtonCounter,
               isShowButton: isShowButton,
               showButton: showButton,
               showThreeCardsDataScreen: showThreeCardsDataScreen);
@@ -49,15 +68,19 @@ class _CardsTabState extends State<CardsTab> {
 
 class cardsTabMobileLayout extends StatelessWidget {
   cardsTabMobileLayout(
-      {required this.isShowButton,
+      {required this.isShowButtonCounter,
+      required this.isShowButton,
       required this.showButton,
       required this.showThreeCardsDataScreen});
 
   Function(List<int>) showButton;
   Function() showThreeCardsDataScreen;
   bool isShowButton;
+  int isShowButtonCounter = 0;
   @override
   Widget build(BuildContext context) {
+    final myNotifier = Provider.of<ShowButtonCounter>(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Center(
@@ -79,11 +102,13 @@ class cardsTabMobileLayout extends StatelessWidget {
                           children: [
                             CardsTurnWidget(
                               showButton: showButton,
+                              position: 0,
                             ),
                             const SizedBox(
                               height: 24,
                             ),
                             CardsTurnWidget(
+                              position: 2,
                               showButton: showButton,
                             ),
                           ],
@@ -96,6 +121,7 @@ class cardsTabMobileLayout extends StatelessWidget {
                     Column(
                       children: [
                         CardsTurnWidget(
+                          position: 1,
                           showButton: showButton,
                         ),
                       ],
@@ -107,7 +133,7 @@ class cardsTabMobileLayout extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 48,
-                  child: isShowButton
+                  child: myNotifier.isShowButton
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 8),
                           child: SizedBox(
@@ -148,6 +174,7 @@ class cardsTabDesktopLayout extends StatelessWidget {
   bool isShowButton;
   @override
   Widget build(BuildContext context) {
+    final myNotifier = Provider.of<ShowButtonCounter>(context);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8),
       child: Center(
@@ -160,18 +187,21 @@ class cardsTabDesktopLayout extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     CardsTurnWidget(
+                      position: 0,
                       showButton: showButton,
                     ),
                     const SizedBox(
                       width: 20,
                     ),
                     CardsTurnWidget(
+                      position: 2,
                       showButton: showButton,
                     ),
                     const SizedBox(
                       width: 20,
                     ),
                     CardsTurnWidget(
+                      position: 1,
                       showButton: showButton,
                     ),
                   ],
@@ -181,7 +211,7 @@ class cardsTabDesktopLayout extends StatelessWidget {
                 ),
                 SizedBox(
                   height: 48,
-                  child: isShowButton
+                  child: myNotifier.isShowButton
                       ? Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 200),
                           child: SizedBox(

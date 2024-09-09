@@ -40,8 +40,8 @@ class MobilePageView extends StatelessWidget {
       controller: PageController(viewportFraction: 0.86),
       children: [
         MobilePageViewItem(cardIndex: indexesList[0]),
-        MobilePageViewItem(cardIndex: indexesList[2]),
         MobilePageViewItem(cardIndex: indexesList[1]),
+        MobilePageViewItem(cardIndex: indexesList[2]),
       ],
     );
   }
